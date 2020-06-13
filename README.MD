@@ -12,3 +12,13 @@ python3 -m venv v_auth
 ~~~ bash
 source v_auth/bin/activate
 ~~~
+
+- `pip freeze` should show nothing since only virtual env was created, nothing installed
+
+3) Install Django
+
+- within virtual environment activated...
+- 
+~~~ bash
+pip install django
+~~~
