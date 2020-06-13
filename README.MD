@@ -22,3 +22,9 @@ source v_auth/bin/activate
 ~~~ bash
 pip install django
 ~~~
+
+4) Create my_site directory, cd into `my_site`, and then create `my_site` project in that directory. The `.` at the end installs everything in the current directory
+
+~~~ bash
+django-admin startproject mysite .
+~~~
