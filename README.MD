@@ -1,7 +1,7 @@
-Django Authetication
+Django Authentication
 
-#### Setup
-1) Setup virutal environment
+#### Project Setup
+1) Setup virtual environment
 
 ~~~ bash
 python3 -m venv v_auth
@@ -39,3 +39,46 @@ django-admin startproject mysite .
 - leaving Username blank just uses current user
 
 8) Verify admin panel can be reached by going to `http://127.0.0.1:8000/admin/`
+
+#### App Setup
+
+1) Create the `authenticate` app from within virtual environment
+
+    ~~~ bash
+    python manage.py startapp authenticate
+    ~~~
+
+2) Add `authenticate` app to the `INSTALLED_APPS` section of `settings.py`
+
+    ~~~ py
+    INSTALLED_APPS = [
+        'authenticate',
+        'django.contrib.admin',
+        'django.contrib.auth',
+    ~~~
+
+3) Create a `urls.py` inside the `authenticate` folder
+
+    ~~~ py
+    from django.urls import path
+
+    urlpatterns = [
+        path(),
+    ]
+    ~~~
+
+4) Add a link to the app `urls.py` into the project `urls.py`
+   - add the `include` import
+   - add a path to the authenticate root directory ( we do not need '/')
+
+   ~~~ py
+   from django.contrib import admin
+   from django.urls import path, include
+
+   urlpatterns = [
+       path('admin/', admin.site.urls),
+       path('', include('authenticate.urls'))
+   ]
+   ~~~
+
+
