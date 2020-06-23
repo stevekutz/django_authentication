@@ -81,4 +81,47 @@ django-admin startproject mysite .
    ]
    ~~~
 
+#### Build Home page
+
+1) Create directory structure `authenticate/templates/authenticate`
+
+2) Add `home.html`
+- this is very basic just to make sure it is set up correctly
+
+    ~~~ html
+    <h1> Home page here </h1>
+    ~~~
+
+3) Update `views.py`
+
+    ~~~ py
+    from django.shortcuts import render
+
+    # Create your views here.
+    def home(request):
+        return render(request, 'authenticate/home.html', {})
+    ~~~
+
+4) Update `urls.py` in `authenticate` app
+
+    ~~~ py
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+    path('', views.home, name = "home") 
+    ]
+    ~~~
+
+5) Update `urls.py` in `my_site` project
+
+    ~~~ py
+    from django.contrib import admin
+    from django.urls import path, include
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', include('authenticate.urls'))
+    ]
+    ~~~
 
