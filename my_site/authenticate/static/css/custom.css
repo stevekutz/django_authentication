@@ -1,0 +1,7 @@
+.buttonOutline button {
+    outline-style: none;
+}
+
+body {
+    background: lightgray;
+}
