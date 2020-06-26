@@ -291,9 +291,12 @@ django-admin startproject mysite .
 
         ~~~ html
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto">
-
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href = "{% url 'login' %}">Login</a>
+                </li>        
         ~~~
+
 
     - the nav bar should now look like this
 
@@ -301,4 +304,70 @@ django-admin startproject mysite .
 
 #### Login Form
 
-1) 
+1) Add the following imports into `urls.py` of the app
+
+    ~~~ py
+    from django.shortcuts import render
+    from django.contrib.auth import authenticate, login, logout
+
+    # Create your views here.
+    def home(request):
+        return render(request, 'authenticate/home.html', {})
+    ~~~
+
+2)  Add a basic `login_user` function to direct user to a login page
+
+    ~~~ py
+    def login_user(request):
+        return render(request, 'authenticate/login.html', {})  
+    ~~~
+
+3) Add a basic `login.html` page to verify view
+
+    ~~~ html
+    {% extends 'authenticate/base.html'%}
+    {% block content %}
+
+    <h1> Login page here </h1>
+
+    {% endblock %}
+    ~~~
+
+4) Update the `urls.py` in the app to add the path(route) to the login page
+
+    ~~~ py
+        from django.urls import path
+        from . import views
+
+        urlpatterns = [
+        path('', views.home, name = "home"),
+        path('login/', views.login_user, name = "login"), 
+        ]
+    ~~~
+
+5) Create form in the `login.html` page
+
+    ~~~ html
+    {% extends 'authenticate/base.html'%}
+    {% block content %}
+
+    <h2 class = "text-center"> Login page here </h2>
+
+    <div class = "col-md-6 offset-md-3">
+        <form>
+        <div class="form-group">
+            
+            <input type="email" class="form-control" aria-describedby="emailHelp" placehiolder = "Enter Username" name = "username">
+        
+        </div>
+        <div class="form-group">
+            
+            <input type="password" class="form-control" placeholder = "Enter Password" name = "password">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+
+    {% endblock %}
+    ~~~
