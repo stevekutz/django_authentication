@@ -385,6 +385,12 @@ django-admin startproject mysite .
 
 7) Update view to handle login
 
+    - makes sure to import `redirect` at top
+
+    ~~~ py
+    from django.shortcuts import render, redirect
+    ~~~
+
    - a registered user(e.g. admin) is redirected to the home page
    - if user does not exist, it keeps user on the login page
    - note, that after admin logs in , the `navbar` still shows `login`
@@ -408,4 +414,58 @@ django-admin startproject mysite .
        else:
            return render(request, 'authenticate/login.html', {})
    ~~~
+
+#### Add some messages for login process
+
+1) Update `views.py` of the app
+
+    - import `messages` in `views.py` of the app
+
+       ~~~ py
+       from django.contrib import messages
+       ~~~
+
+    - update the `login_user` method
+
+    ~~~ py
+        # verify if user exists
+        if user is not None:
+            login(request, user)
+            messages.success(request, "You are logged in" )
+            return redirect('home')   # take user to home page  
+
+        else:
+            messages.success(request, "Error not logged in" )
+            return redirect('login') # stay on the login page
+
+    else:
+        return render(request, 'authenticate/login.html', {})
+    ~~~
+
+
+2) Add the following to `base.html`
+
+    ~~~ html
+        </nav>    
+
+
+
+        <br/>
+        <div class = "container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-dark alert-dismissable" role="alert">
+                        <button class = "close" data-dismiss = "alert" >
+                            <small><sup>x</sup></small>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}    
+
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+    ~~~
 

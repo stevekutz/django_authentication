@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
@@ -16,9 +17,11 @@ def login_user(request):
         # verify if user exists
         if user is not None:
             login(request, user)
+            messages.success(request, "You are logged in" )
             return redirect('home')   # take user to home page  
 
         else:
+            messages.success(request, "Error not logged in" )
             return redirect('login') # stay on the login page
 
     else:
