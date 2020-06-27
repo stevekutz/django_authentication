@@ -371,3 +371,41 @@ django-admin startproject mysite .
 
     {% endblock %}
     ~~~
+
+6) Make form functional
+
+   - add a `POST` method to the `form` tag
+   - add a `csrf token` for security (prevents cross-site-request-forgery)
+   - 
+
+   ~~~ html
+       <form> method = "POST">
+       {% csrf_token %}
+   ~~~
+
+7) Update view to handle login
+
+   - a registered user(e.g. admin) is redirected to the home page
+   - if user does not exist, it keeps user on the login page
+   - note, that after admin logs in , the `navbar` still shows `login`
+   
+   ~~~ py
+   def login_user(request):
+       if request.method == 'POST':
+           username = request.POST['username']
+           password = request.POST['password']
+           # build user obj
+           user = authenticate(request, username=username, password=password)
+
+           # verify if user exists
+           if user is not None:
+               login(request, user)
+               return redirect('home')   # take user to home page  
+
+           else:
+               return redirect('login') # stay on the login page
+
+       else:
+           return render(request, 'authenticate/login.html', {})
+   ~~~
+
