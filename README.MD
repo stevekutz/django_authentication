@@ -184,26 +184,26 @@ django-admin startproject mysite .
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dropdown
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                        </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -415,7 +415,7 @@ django-admin startproject mysite .
            return render(request, 'authenticate/login.html', {})
    ~~~
 
-#### Add some messages for login process
+#### Add some messages for login & logout process
 
 1) Update `views.py` of the app
 
@@ -442,10 +442,31 @@ django-admin startproject mysite .
         return render(request, 'authenticate/login.html', {})
     ~~~
 
+    - create a `logout_user` method
+
+    ~~~ py
+        def logout_user(request):
+        logout(request)
+        messages.success(request, "You are logged out" )
+        return redirect('home')   # take user to home page
+    ~~~
 
 2) Add the following to `base.html`
 
     ~~~ html
+        
+                    {% if  user.is_authenticated %}
+                        <a class="nav-link" href = "{% url 'logout' %}">Logout</a>
+                    {% else %}
+                    <li class="nav-item">   
+                        <a class="nav-link" href = "{% url 'login' %}">Login</a>
+                            
+                    </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        
         </nav>    
 
 
@@ -469,3 +490,15 @@ django-admin startproject mysite .
         </div>
     ~~~
 
+3) Update the `urls.py` of the app
+
+    ~~~ py
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+    path('', views.home, name = "home"),
+    path('login/', views.login_user, name = "login"),
+    path('logout/', views.logout_user, name = "logout"), 
+    ]
+    ~~~
