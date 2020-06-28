@@ -502,3 +502,6 @@ django-admin startproject mysite .
     path('logout/', views.logout_user, name = "logout"), 
     ]
     ~~~
+
+#### Modify home page to show user info when logged in
+

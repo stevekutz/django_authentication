@@ -3,4 +3,11 @@
 
 <h1> Home page here </h1>
 
+{% if user.is_authenticated %}
+    <p> User: {{user.username}} </p>
+    <p> email: {{ user.email}}</p>
+    <p> name: {{user.first_name}} {{user.last_name }} </p>
+{% endif %}
+
+
 {% endblock %}
