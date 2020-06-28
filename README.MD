@@ -504,4 +504,60 @@ django-admin startproject mysite .
     ~~~
 
 #### Modify home page to show user info when logged in
+1) Update `home.html`
 
+    ~~~ html
+    {% if user.is_authenticated %}
+        <p> User: {{user.username}} </p>
+        <p> email: {{ user.email}}</p>
+        <p> name: {{user.first_name}} {{user.last_name }} </p>
+    {% endif %}
+    ~~~
+
+#### User Registration
+
+1) Create `register_user` method in `views.py` in app
+
+   - a simple route to registration page is put together to make sure app is wired up correctly
+ 
+    ~~~ py
+    def register_user(request):
+        return render(request, 'authenticate/register.html', {})
+    ~~~
+
+2) Add a register link to `base.html`
+
+    ~~~ html
+        <li class="nav-item">   
+            <a class="nav-link" href = "{% url 'login' %}">Login</a>                       
+        </li>
+        <li class="nav-item">   
+            <a class="nav-link" href = "{% url 'register' %}">Register</a>                       
+        </li>
+    ~~~
+
+
+3) Update `urls.py` to add route to registration page
+
+    ~~~ py
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+    path('', views.home, name = "home"),
+    path('login/', views.login_user, name = 'login'),
+    path('logout/', views.logout_user, name = 'logout'), 
+    path('register/', views.register_user, name = 'register'),
+    ]
+    ~~~
+
+4) Create a simple `register.html` to verify link works properly
+
+    ~~~ html
+    {% extends 'authenticate/base.html' %}
+
+    {% block content %}
+        <h2> Register page </h2>
+
+    {% endblock %}
+    ~~~
