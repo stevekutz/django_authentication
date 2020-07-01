@@ -562,7 +562,7 @@ django-admin startproject mysite .
     {% endblock %}
     ~~~
 
-#### Registration form
+#### Registration form using Django's built in tools 
 
 1) Update `register_user` method to use Django's `UserCreationForm`
 
@@ -626,3 +626,66 @@ django-admin startproject mysite .
         </form>
     {% endblock %}
     ~~~
+
+#### Creating Registration form manually
+
+1) Create `forms.py` in the app's  `authenticate` folder
+
+   - import the following
+
+   ~~~ py
+   from django.contrib.auth.forms import UserCreationForm
+   from django import forms
+   from django.contrib.auth.models import User
+   ~~~
+
+   - create the `SignUpForm` class
+
+   ~~~ py
+   class SignUpForm(UserCreationForm):
+       email = forms.EmailField()
+       first_name = forms.CharField(max_length = 50)
+       last_name = forms.CharField(max_length = 50)
+
+       class Meta:
+           model = User
+           fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
+   ~~~
+
+2) Update `views.py`
+
+   - add import 
+
+   ~~~ py
+   from .forms import SignUpForm
+   ~~~
+
+- replace `UserCreationForm` with `SignUpForm` in the `register_user` method
+
+    ~~~ py
+    def register_user(request):
+        # if user types info into form, create form obj from request data
+        if request.method == 'POST':
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                form.save()
+                # extract out username & password
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password1']
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                messages.success(request, ("You have successfully registered"))
+                return redirect('home')
+
+
+        # if user did not type in anything
+        else: 
+            form = SignUpForm()
+
+        # create a context dictionary
+        context = {'form': form}
+
+        return render(request, 'authenticate/register.html', context)
+    ~~~
+
+    

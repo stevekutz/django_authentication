@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 
+from .forms import SignUpForm
+
+
 # Create your views here.
 def home(request):
     return render(request, 'authenticate/home.html', {})
@@ -37,7 +40,7 @@ def logout_user(request):
 def register_user(request):
     # if user types info into form, create form obj from request data
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
             # extract out username & password
@@ -51,7 +54,7 @@ def register_user(request):
 
     # if user did not type in anything
     else: 
-        form = UserCreationForm()
+        form = SignUpForm()
 
     # create a context dictionary
     context = {'form': form}
