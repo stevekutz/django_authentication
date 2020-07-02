@@ -1,17 +1,19 @@
 {% extends 'authenticate/base.html' %}
 
 {% block content %}
-    <h2> Register page </h2>
+    <h2 class = "text-center"> Register page </h2>
 
-    <form method = "POST" action = "{% url 'register' %}">
-        {% csrf_token %}
+    <div class = "col-md-6 offset-md-3">
+        <form method = "POST" action = "{% url 'register' %}">
+            {% csrf_token %}
+            
+            {% if form.errors%}
+                <p> Error in form </p>
+            {% endif %}
         
-        {% if form.errors%}
-            <p> Error in form </p>
-        {% endif %}
-    
-        {{ form.as_p }}
+            {{ form.as_p }}
 
-        <input type = "submit" value = "Register" class = " btn btn-secondary">
-    </form>
+            <input type = "submit" value = "Register" class = " btn btn-secondary">
+        </form>
+    </div>
 {% endblock %}

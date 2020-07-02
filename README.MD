@@ -688,4 +688,38 @@ django-admin startproject mysite .
         return render(request, 'authenticate/register.html', context)
     ~~~
 
-    
+3) Center the `form` tag in `register.html` by surrounding it with the following 
+
+    ~~~ html
+    <div class = "col-md-6 offset-md-3">
+    ~~~
+
+4) Center the `h2` tag  by adding a class
+
+    ~~~ html
+    <h2 class = "text-center"> Register page </h2>
+    ~~~
+
+5) Add widgets to the `email`, `first_name`, `last_name` properties of the `SignUpForm` class
+
+    ~~~ py
+    class SignUpForm(UserCreationForm):
+        email = forms.EmailField( widget = forms.TextInput(attrs={'class': 'form-control'})) 
+        first_name = forms.CharField(max_length = 50, widget = forms.TextInput(attrs={'class': 'form-control'}))
+        last_name = forms.CharField(max_length = 50, widget = forms.TextInput(attrs={'class': 'form-control'}))
+    ~~~
+
+6) Update the `username`, `password1`, and `password2` properties using the bootstrap `form-control` class
+
+    ~~~ py
+        class Meta:
+            model = User
+            fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
+
+        def __init__(self, *args, **kwargs):
+            super(SignUpForm, self).__init__(*args, *kwargs)
+
+            self.fields['username'].widget.attrs['class'] = 'form-control'
+            self.fields['password1'].widget.attrs['class'] = 'form-control'  
+            self.fields['password2'].widget.attrs['class'] = 'form-control''
+    ~~~
