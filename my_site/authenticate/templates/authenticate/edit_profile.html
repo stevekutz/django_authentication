@@ -5,7 +5,7 @@
 <h2 class = "text-center"> Edit Profile Page </h2>
 
     
-    <form method = "POST" action = "{% url 'register' %}">
+    <form method = "POST" action = "{% url 'edit_profile' %}">
         {% csrf_token %}
         {% if form.errors%}
         <div class="alert alert-dark alert-dismissable control-group" role="alert">

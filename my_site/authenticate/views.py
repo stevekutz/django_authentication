@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 
-from .forms import SignUpForm
+from .forms import SignUpForm, UserEditForm
 
 
 # Create your views here.
@@ -64,5 +63,20 @@ def register_user(request):
 
 def edit_profile(request):
 
-    context = {}
-    return render(request, 'authenticate/edit_profile.html', context)    
+    if request.method == 'POST':
+            form = UserEditForm(request.POST, instance = request.user)
+            if form.is_valid():
+                form.save()
+        
+                messages.success(request, ("You have updated your profile"))
+                return redirect('home')
+
+
+    # if user did not type in anything
+    else: 
+        form = UserEditForm(instance = request.user)
+
+    # create a context dictionary
+    context = {'form': form}
+
+    return render(request, 'authenticate/edit_profile.html', context)   

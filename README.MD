@@ -864,7 +864,7 @@ def __init__(self, *args, **kwargs):
    <h2 class = "text-center"> Edit Profile Page </h2>
 
        
-       <form method = "POST" action = "{% url 'register' %}">
+       <form method = "POST" action = "{% url 'edit_profile' %}">
            {% csrf_token %}
            {% if form.errors%}
            <div class="alert alert-dark alert-dismissable control-group" role="alert">
@@ -893,3 +893,103 @@ def __init__(self, *args, **kwargs):
    ~~~
 
 5) Create  link to `edit_profile.html` in the `base.html`
+
+    ~~~ html
+       {% if  user.is_authenticated %}
+           <li>
+               <a class="nav-link" href = "{% url 'logout' %}">Logout</a>
+                               <li>
+               <a class = "nav-link" href = "{% url 'edit_profile' %}"> Edit Profile </a>
+           </li>
+       {% else %}
+           <li class="nav-item">   
+               <a class="nav-link" href = "{% url 'login' %}">Login</a>                       
+           </li>
+           <li class="nav-item">   
+               <a class="nav-link" href = "{% url 'register' %}">Register</a>                       
+           </li>
+
+       {% endif %}
+    ~~~
+
+6) Update the `edit_profile`  view   
+
+   - note that the `UserChangeForm` is used
+   - an `instance` of `request.user` is passed into the form
+
+    ~~~ py
+    def edit_profile(request):
+
+        if request.method == 'POST':
+                form = UserChangeForm(request.POST, instance = request.user)
+                if form.is_valid():
+                    form.save()
+            
+                    messages.success(request, ("You have updated your profile"))
+                    return redirect('home')
+
+
+        # if user did not type in anything
+        else: 
+            form = UserChangeForm(instance = request.user)
+
+        # create a context dictionary
+        context = {'form': form}
+
+        return render(request, 'authenticate/edit_profile.html', context)  
+    ~~~
+
+7) Update `forms.py` to edit fields user needs to change profile
+
+    - add `UserChangeForm` import
+
+    ~~~ py
+    from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+    ~~~
+
+    - create `UserEditForm`
+    
+    - the password field needs to be included in order to update the other fields
+    - the link to update the password is not yet functional
+
+    ~~~ py
+    class UserEditForm(UserChangeForm):
+
+        class Meta:
+            model = User
+            fields = ('username', 'first_name', 'last_name', 'email', 'password')
+    ~~~
+
+
+
+8) Update `views.py` to include the new `UserEditForm` class
+
+    - add import
+
+    ~~~ py
+    from .forms import SignUpForm, UserEditForm
+    ~~~
+
+    - update `edit_profile`
+
+    ~~~ py
+    def edit_profile(request):
+
+        if request.method == 'POST':
+                form = UserEditForm(request.POST, instance = request.user)
+                if form.is_valid():
+                    form.save()
+            
+                    messages.success(request, ("You have updated your profile"))
+                    return redirect('home')
+
+
+        # if user did not type in anything
+        else: 
+            form = UserEditForm(instance = request.user)
+
+        # create a context dictionary
+        context = {'form': form}
+
+        return render(request, 'authenticate/edit_profile.html', context)
+    ~~~
