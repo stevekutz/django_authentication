@@ -993,3 +993,138 @@ def __init__(self, *args, **kwargs):
 
         return render(request, 'authenticate/edit_profile.html', context)
     ~~~
+
+#### Update password functionality
+
+1) update `views.py`
+
+    - import `PasswordChangeForm`
+
+    ~~~ py
+    from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+    ~~~
+
+    - create `change_password` view 
+    - this is similar to the edit_profile except that:
+        - `PasswordChangeForm` is used
+        - `data = request.POST` instead of  `request.POST`
+        - `user = request.user` instead of `instance = request.user`
+    ~~~ py
+    def change_password(request):
+        if request.method == 'POST':
+            form = PasswordChangeForm(data = request.POST, user = request.user)
+            if form.is_valid():
+                form.save()
+        
+                messages.success(request, ("You have changed your password"))
+                return redirect('home')
+
+
+        # if user did not type in anything
+        else: 
+            form = PasswordChangeForm(user = request.user)
+
+        # create a context dictionary
+        context = {'form': form}
+
+        return render(request, 'authenticate/change_password.html', context) 
+    ~~~
+
+
+ 2) Update `urls.py` to include route to `change_password` page   
+
+    ~~~ py
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+    path('', views.home, name = "home"),
+    path('login/', views.login_user, name = 'login'),
+    path('logout/', views.logout_user, name = 'logout'), 
+    path('register/', views.register_user, name = 'register'),
+    path('edit_profile', views.edit_profile, name = 'edit_profile'),
+    path('change_password', views.change_password, name = 'change_password'),
+    ]
+    ~~~
+
+3) Create the `change_password.html` file
+
+    ~~~ html
+    {% extends 'authenticate/base.html'%}
+
+    {% block content %}
+
+    <h2 class = "text-center"> Change Password </h2>
+
+        
+        <form method = "POST" action = "{% url 'updat_password' %}">
+            {% csrf_token %}
+            {% if form.errors%}
+            <div class="alert alert-dark alert-dismissable control-group" role="alert">
+                <button class = "close" data-dismiss = "alert" >
+                    <small><sup>x</sup></small>
+                </button>
+                <p> Please resolve the following before submitting form </p>
+                {% for field in form %}
+                    {% if field.errors %}
+                        {{field.errors}}        
+                    {% endif %}    
+                {% endfor %}
+
+
+            </div>
+
+            {% endif %}
+        
+            {{ form.as_p }}
+
+            <input type = "submit" value = "Change Password" class = " btn btn-secondary">
+        </form>
+        
+
+    {% endblock %}
+    ~~~
+
+4) Add link to `change_password.html` in `base.html`
+
+    ~~~ html
+        {% if  user.is_authenticated %}
+            <li>
+                <a class="nav-link" href = "{% url 'logout' %}">Logout</a>
+            </li>
+            <li>
+                <a class = "nav-link" href = "{% url 'edit_profile' %}"> Edit Profile </a>
+            </li>
+            <li>
+                <a class = "nav-link" href = "{% url 'change_password' %}"> Change Password </a>
+            </li>
+        {% else %}
+            <li class="nav-item">   
+                <a class="nav-link" href = "{% url 'login' %}">Login</a>                       
+            </li>
+            <li class="nav-item">   
+                <a class="nav-link" href = "{% url 'register' %}">Register</a>                       
+            </li>
+
+        {% endif %}
+    ~~~
+
+5) Keep user logged in after changing password
+
+- import update_session_auth_hash to `views.py`
+
+    ~~~ py
+    from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+    ~~~ 
+
+- add call to `change_password`
+
+~~~ py
+    if form.is_valid():
+        form.save()
+        # this keep user logged in after changing password 
+        update_session_auth_hash(request, form.user)   
+
+        messages.success(request, ("You have changed your password"))
+        return redirect('home')
+~~~
