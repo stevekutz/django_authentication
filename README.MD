@@ -815,3 +815,81 @@ def __init__(self, *args, **kwargs):
         </div>
     {% endblock %}
     ~~~
+
+#### User Profile Update
+ 
+    - adds the ability of a user to edit their profile
+
+1) Add the following import to the app's  `views.py`
+
+    ~~~ py
+    from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+    ~~~
+
+2) Create an `edit_profile` view
+
+   - a simple redirect to the edit page will be set up intially
+
+   ~~~ py
+   def edit_profile(request):
+
+       context = {}
+       return render(request, 'authenticate/edit_profile.html', context)    
+   ~~~
+
+3) Update the app's `urls.py`
+
+    ~~~ py
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+    path('', views.home, name = "home"),
+    path('login/', views.login_user, name = 'login'),
+    path('logout/', views.logout_user, name = 'logout'), 
+    path('register/', views.register_user, name = 'register'),
+    path('edit_profile', views.edit_profile, name = 'edit_profile'),
+    ]
+    ~~~
+
+4) Create the `edit.profile,html` page
+
+   - this is based upon the registration page
+
+   ~~~ py
+   {% extends 'authenticate/base.html'%}
+
+   {% block content %}
+
+   <h2 class = "text-center"> Edit Profile Page </h2>
+
+       
+       <form method = "POST" action = "{% url 'register' %}">
+           {% csrf_token %}
+           {% if form.errors%}
+           <div class="alert alert-dark alert-dismissable control-group" role="alert">
+               <button class = "close" data-dismiss = "alert" >
+                   <small><sup>x</sup></small>
+               </button>
+               <p> Please resolve the following before submitting form </p>
+               {% for field in form %}
+                   {% if field.errors %}
+                       {{field.errors}}        
+                   {% endif %}    
+               {% endfor %}
+
+
+           </div>
+
+           {% endif %}
+       
+           {{ form.as_p }}
+
+           <input type = "submit" value = "Register" class = " btn btn-secondary">
+       </form>
+       
+
+   {% endblock %}
+   ~~~
+
+5) Create  link to `edit_profile.html` in the `base.html`
