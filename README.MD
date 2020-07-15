@@ -30,11 +30,12 @@ django-admin startproject mysite .
 ~~~
 
 5) Test that server launches by running `python manage.py runserver` and running port `http://127.0.0.1:8000/`
+   
 - ignore migration error messages
 
-6) Run `python manage.py migrate` to apply initial migrations 
+1) Run `python manage.py migrate` to apply initial migrations 
 
-7) Create an admin superuser so that the admin panel can be accessed
+2) Create an admin superuser so that the admin panel can be accessed
 - Run  `python manage.py createsuperuser`
 - leaving Username blank just uses current user
 
@@ -504,6 +505,7 @@ django-admin startproject mysite .
     ~~~
 
 #### Modify home page to show user info when logged in
+
 1) Update `home.html`
 
     ~~~ html
@@ -778,4 +780,38 @@ def __init__(self, *args, **kwargs):
         self.fields['password2'].help_text = '<span class = "form-text text-muted"><small> Enter the same password as before, for verification </small> </span>'
 ~~~
 
+9) Update `register.html` to list form validation error messages in alert box
 
+    ~~~ html
+    {% extends 'authenticate/base.html' %}
+
+    {% block content %}
+        <h2 class = "text-center"> Register page </h2>
+
+        <div class = "col-md-6 offset-md-3">
+            <form method = "POST" action = "{% url 'register' %}">
+                {% csrf_token %}
+                {% if form.errors%}
+                <div class="alert alert-dark alert-dismissable control-group" role="alert">
+                    <button class = "close" data-dismiss = "alert" >
+                        <small><sup>x</sup></small>
+                    </button>
+                    <p> Please resolve the following before submitting form </p>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {{field.errors}}        
+                        {% endif %}    
+                    {% endfor %}
+
+
+                </div>
+
+                {% endif %}
+        
+                {{ form.as_p }}
+
+                <input type = "submit" value = "Register" class = " btn btn-secondary">
+            </form>
+        </div>
+    {% endblock %}
+    ~~~

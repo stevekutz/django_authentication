@@ -6,11 +6,23 @@
     <div class = "col-md-6 offset-md-3">
         <form method = "POST" action = "{% url 'register' %}">
             {% csrf_token %}
-            
             {% if form.errors%}
-                <p> Error in form </p>
+            <div class="alert alert-dark alert-dismissable control-group" role="alert">
+                <button class = "close" data-dismiss = "alert" >
+                    <small><sup>x</sup></small>
+                </button>
+                <p> Please resolve the following before submitting form </p>
+                {% for field in form %}
+                    {% if field.errors %}
+                        {{field.errors}}        
+                    {% endif %}    
+                {% endfor %}
+
+
+            </div>
+
             {% endif %}
-        
+       
             {{ form.as_p }}
 
             <input type = "submit" value = "Register" class = " btn btn-secondary">
