@@ -1128,3 +1128,30 @@ def __init__(self, *args, **kwargs):
         messages.success(request, ("You have changed your password"))
         return redirect('home')
 ~~~
+
+#### Clean up Edit Profile page
+
+1) Add the `password`property with the formatting
+
+    ~~~ py
+    class UserEditForm(UserChangeForm):
+
+        password = forms.CharField(label = '', widget = forms.TextInput(attrs={'type': 'hidden', }))
+
+        class Meta:
+            model = User
+            fields = ('username', 'first_name', 'last_name', 'email', 'password')
+    ~~~
+
+2) Add a link to the bottom of `edit_profile` 
+
+~~~ html
+    {{ form.as_p }}
+
+        <input type = "submit" value = "Update" class = " btn btn-secondary">
+    </form>
+    <br/>
+    <p><small><a href = "{% url 'change_password' %}" /> Click Here To Change Password </small></
+~~~
+
+
